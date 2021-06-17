@@ -15,4 +15,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('heartbeat',[UserController::class,"index"]);
+Route::apiResource("users",UserController::class);
+// or the commented stuff
+//Route::get('users',[UserController::class,'index']);
+//Route::get('users/{id}',[UserController::class,'show']);
+//Route::post('users',[UserController::class,'store']);
+//Route::put('users/{id}',[UserController::class,'update']);
+//Route::delete('users/{id}',[UserController::class,'destroy']);
