@@ -6,7 +6,7 @@ In these files you can register the routes like the following:
 - Using Controllers function: <code>Route::get('heartbeat',[ControllerClassName::class,"method of this class to be called"]);</code>
 - Using apiResource to replace all 5 crud operations routes in one route only
     - <code>Route::apiResource("users",UserController::class);</code> is equivalent to
-    - Route::get('users',[UserController::class,'index']); Route::get('users/{id}',[UserController::class,'show']); Route::post('users',[UserController::class,'store']); Route::put('users/{id}',[UserController::class,'update']); Route::delete('users/{id}',[UserController::class,'destroy']);
+    - <code>Route::get('users',[UserController::class,'index']); Route::get('users/{id}',[UserController::class,'show']); Route::post('users',[UserController::class,'store']); Route::put('users/{id}',[UserController::class,'update']); Route::delete('users/{id}',[UserController::class,'destroy']);</code>
 
 ### Controllers: (UserController)
 ./app/Http is the folder that contains controllers.
@@ -98,7 +98,7 @@ an example is Response::HTTP_CREATED for 201
 - migrate database: <code>php artisan migrate</code>
 - creating a table seeder: <code>php artisan make:seeder tablename_seeder</code>
 - running all seeders: <code>php artisan db:seed</code>
-- list all routes registered in app: php artisan route:list
+- list all routes registered in app: <code>php artisan route:list</code>
 
 ### Hashing:
 a class called Hash can help to has things like a password
