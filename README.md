@@ -82,16 +82,38 @@ eloquent is an ORM object-relational mapper that allows to interact with the dat
 - <code>$user->update()</code>
     - can take an array like ['username'=>$request->input('username'),'last_name'=>'example'']
 - <code>User::destroy($id);</code> delete item
+- <code>$modelClass::paginate()</code>
+    - This will paginate the results for index action for example.
+    in the url we can add query params and paginate() will take care of them 
+    ex. localhost:8000/api/users?page=2 here we indicate that page returned should be page 2 
 
-### Request:
+### Default Request:
 is a class responsible of giving request information
 - <code>$request->all()</code> returns an array containing the data sent to the server 
 - <code>$request->input('input_name'')</code> returns a specific output from the request
+
 ### Response:
 is a class responsible of creating responses
 The Response class has constants resolving to numbers signifying the status code of the response
 an example is Response::HTTP_CREATED for 201
 - <code>response($data_to_pass,Response::HTTP_CREATED);</code>
+
+### Custom Request: (ModelNameActionRequest ex UserCreateRequest)
+./app/Http/Requests folder contains the custom request classes
+these classes control the rules. rules that define a valid request or no
+if a request to add a user is sent and UserRequest defines that first_name is required
+and first_name is not provided then the request is a bad request.
+If the request is wrong an automatic error message will be sent.
+like the following <code>{"message": "The given data was invalid.","errors": {"email": ["The email must be a valid email address."]}}</code>
+- rules
+    - required ex. <code>'first_name'=>'required'</code>
+    - email ex. <code>'email'=>'email'</code>
+    - same as another field ex. repeat_password <code>'repeat_password'=>'require|same:password'</code>
+    - Operations:
+        - combining rules (and) ex. <code>'email'=>'email|required'</code>
+- functions:
+    - <code>$request->only(array_containing_strings)</code> ex. array_containing_strings=['first_name','last_name']
+    - <code>public function rules(){return [rules go here]}</code>
 
 ### PHP Artisan:
 - Create controller: <code>php artisan make:controller ControllerName</code>
@@ -99,12 +121,55 @@ an example is Response::HTTP_CREATED for 201
 - creating a table seeder: <code>php artisan make:seeder tablename_seeder</code>
 - running all seeders: <code>php artisan db:seed</code>
 - list all routes registered in app: <code>php artisan route:list</code>
+- creating a request: <code>php artisan make:request RequestName</code>
 
 ### Hashing:
 a class called Hash can help to has things like a password
 - <code>Hash::make($password)</code>
 
+### Laravel Passport
+is a package for handling user authentication
+- Installation:
+    - <code>composer require laravel/passport </code>
+    - <code>php artisan migrate</code> to migrate the new tables that we get with passport installation
+    - <code> php artisan passport:install </code> to generate keys 
+    - Go to user model and add <code>use HasApiTokens</code> 
+    - Go to ./app/Providers/AppServiceProvider and add in boot function <code>Passport::routes()</code> to register passport routes
+    - Go to ./config/auth.php in guards --> api change driver from token to passport
+    - create an AuthController using artisan 
+
+### Authentication:
+- Passport:
+    - <code>Auth::attempt($request->only('email','password'))</code> step one to attempt and authenticate the user
+    - <code>$user = Auth::user();\
+    $token = $user->createToken('admin')->accessToken;\
+    return [
+         'token'=>$token,
+         ];
+    </code> Step 2 the if step one succeeds get the user create a token for him and send it back
 ### Responses codes:
 - Created <code>Response::HTTP_CREATED</code> 201
 - Updated <code>Response::HTTP_ACCEPTED</code> 202
 - Deleted <code>Response::HTTP_NO_CONTENT</code> 204
+- Unauthorized <code>Response::HTTP_UNAUTHORIZED</code> 401
+
+### Middleware:
+Are like layers they run before a certain action is done Middlewares can be like:
+    - Authentication (check protecting routes section)
+
+### Protecting routes: 
+You can put routes under the same group protected by a middleware as follows
+- <code>Route::group(['middleware'=>'auth:api'],function (){ \
+            Route::apiResource("users",UserController::class);\
+        });
+  </code>
+### IDE Helper:
+this is useful to use because sometimes the ide does not recognise some functions of laravel
+and highlights them in an annoying way.
+- Steps:
+    - <code>composer require --dev barryvdh/laravel-ide-helper</code>
+    - <code>php artisan ide:generate</code> this will create a helper file in root directory
+    called _ide_helper.php 
+    - <code>php artisan ide:models</code> to create models helpers 
+    - answer by no to insert the code in the _ide_helper_models file if you say yes it will be in the models class
+    
